@@ -74,12 +74,20 @@ for post in posts:
 	driver.get(post)
 	shortcode = driver.current_url.split("/")[-2]
 	time.sleep(7)
-	if driver.find_element_by_css_selector("img[style='object-fit: cover;']") is not None:
-		download_url = driver.find_element_by_css_selector("img[style='object-fit: cover;']").get_attribute('src')
-		urllib.request.urlretrieve( download_url, '{}.jpg'.format(shortcode))
-	else:
-		download_url = driver.find_element_by_css_selector("video[type='video/mp4']").get_attribute('src')
-		urllib.request.urlretrieve( download_url, '{}.mp4'.format(shortcode))
-	time.sleep(5)
+	try:
+		if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
+			download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
+			urllib.request.urlretrieve( download_url, '{}.jpg'.format(shortcode))
+		time.sleep(5)
+	except:
+		print(0)
+		
+	try:
+		if driver.find_element(By.CSS_SELECTOR, "video[type='video/mp4']") is not None:
+			download_url = driver.find_element(By.CSS_SELECTOR, "video[type='video/mp4']").get_attribute('src')
+			urllib.request.urlretrieve( download_url, '{}.mp4'.format(shortcode))
+		time.sleep(5)
+	except:
+		print(1)
 
 driver.close()
