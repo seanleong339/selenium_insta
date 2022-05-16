@@ -1,0 +1,1 @@
+https://medium.com/analytics-vidhya/web-scraping-instagram-with-selenium-python-b8e77af32ad4#:~:text=Selenium%20is%20a%20powerful%20tool%20for%20scraping.%20It,to%20our%20Instagram%20account%20to%20scraping%20Instagram%E2%80%99s%20website.
