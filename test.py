@@ -4,9 +4,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 import time, urllib.request
 import requests
 import os
+import json
 
 WINDOW_SIZE = "1920,1080"
 
@@ -28,7 +30,10 @@ password.send_keys("foobar782")
 login = driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 
 time.sleep(10)
-notnow = driver.find_element(By.XPATH, "//button[contains(text(), 'Not Now')]").click()
+try:
+    notnow = driver.find_element(By.XPATH, "//button[contains(text(), 'Not Now')]").click()
+except:
+    print("No popup asking to save login details")
 
 time.sleep(10)
 
@@ -50,51 +55,28 @@ driver.refresh()
 currenturl = driver.current_url.split('/')[-2]
 print(currenturl)
 
-#scroll
-#scrolldown=driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var scrolldown=document.body.scrollHeight;return scrolldown;")
-#match = False
-#while (match == False):
-#    last_count = scrolldown
-#    time.sleep(3)
-#    scrolldown = driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var scrolldown=document.body.scrollHeight;return scrolldown;")
-#    if last_count == scrolldown:
-#        match = True
-
-#get posts
 posts = []
 links = driver.find_elements(By.TAG_NAME, "a")
 for link in links:
     post = link.get_attribute('href')
     if '/p/' in post:
         posts.append(post)
-
-print(posts)
-print(len(posts))
-
+        
 download_url = ''
 download_path = 'downloads/' + currenturl
+
 if not os.path.isdir(download_path):
 	os.makedirs(download_path)
-for post in posts:	
-	driver.get(post)
-	shortcode = driver.current_url.split("/")[-2]
-	caption = driver.find_element(By.TAG_NAME, "span").text
-	print(caption)
-	time.sleep(7)
-	try:
-		if driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']") is not None:
-			download_url = driver.find_element(By.CSS_SELECTOR, "img[style='object-fit: cover;']").get_attribute('src')
-			urllib.request.urlretrieve( download_url, '{}/{}.jpg'.format(download_path,shortcode))
-		time.sleep(5)
-	except:
-		print(0)
-		
-	try:
-		if driver.find_element(By.CSS_SELECTOR, "video[type='video/mp4']") is not None:
-			download_url = driver.find_element(By.CSS_SELECTOR, "video[type='video/mp4']").get_attribute('src')
-			urllib.request.urlretrieve( download_url, '{}/{}.mp4'.format(download_path,shortcode))
-		time.sleep(5)
-	except:
-		print(1)
+	
+driver.get(posts[0])
+shortcode = driver.current_url.split("/")[-2]
+content = driver.page_source
+soup = BeautifulSoup(content, 'html.parser')
+comments = soup.find_all(class_="XQXOT")
+words = []
+for comment in comments:
+    words.append(comment.find_all(class_='p9YgZ'))
+print(words)
+
 
 driver.close()

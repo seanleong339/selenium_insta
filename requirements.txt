@@ -6,3 +6,4 @@ pytest-cov
 selenium
 requests
 webdriver-manager
+beautifulsoup4
